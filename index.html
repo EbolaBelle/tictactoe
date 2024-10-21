@@ -7,13 +7,18 @@
     <link rel="stylesheet" href="styles.css">
     <style>
 
-        .body {
+        * {
+            box-sizing: border-box;
+        }
+
+        .board {
             display: grid;
             grid-template-columns: repeat(3, 150px);
             grid-row: repeat(3, 150px);
         }
 
         .cell {
+            font-size: xx-large;
             background-color: red;
             height: 150px;
             width: 150px;
@@ -25,17 +30,9 @@
     <div class="header">
         <h1>Tic Tac Toe</h1>
     </div>
-    <div class="body">
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-    </div>
+    <div class="current-player"></div>
+    <div class="board"></div>
+    <div class="winner"></div>
     <script src="scripts.js"></script>
 </body>
 </html>

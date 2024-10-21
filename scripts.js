@@ -19,9 +19,9 @@ const gameBoard = (function () {
 })
 
 function Cell() {
-    let value = 0;
+    let value = "-";
     const placeMarker = (marker) => {
-        if (value != 0) {
+        if (value != '-') {
             console.log("Invalid move");
             return;
         } else {
@@ -55,6 +55,8 @@ function GameController(
     }
     const getActivePlayer = () => activePlayer;
 
+    let round = 0;
+
     const printNewRound = () => {
         board.printBoard();
         console.log(`${getActivePlayer().name}'s turn.`);
@@ -67,29 +69,80 @@ function GameController(
     }
 
     const playRound = (row, column) => {
-        board.getBoard()[row][column].placeMarker(activePlayer.token);
-        const winState = ['XXX', 'OOO'];
-        const downwardDiagonal = flattenBoard().charAt(0) + flattenBoard().charAt(4) + flattenBoard().charAt(8);
-        const upwardDiagonal = flattenBoard().charAt(2) + flattenBoard().charAt(4) + flattenBoard().charAt(6);
-        const columnOne = flattenBoard().charAt(0) + flattenBoard().charAt(3) + flattenBoard().charAt(6);
-        const columnTwo = flattenBoard().charAt(1) + flattenBoard().charAt(4) + flattenBoard().charAt(7);
-        const columnThree = flattenBoard().charAt(2) + flattenBoard().charAt(5) + flattenBoard().charAt(8);
-        if (winState.includes(flattenBoard().slice(0,3))
-            || winState.includes(flattenBoard().slice(3,6))
-            || winState.includes(flattenBoard().slice(6))
-            || winState.includes(downwardDiagonal)
-            || winState.includes(upwardDiagonal)
-            || winState.includes(columnOne)
-            || winState.includes(columnTwo)
-            || winState.includes(columnThree)) {
-                console.log(`${getActivePlayer().name} wins`);
+        if (board.getBoard()[row][column].getValue() != "-") {
+            return
         } else {
-            switchPlayerTurn();
-            printNewRound();
-        }
+            board.getBoard()[row][column].placeMarker(activePlayer.token);
+            round++            
+            const winState = ['OOO', 'XXX'];
+            const downwardDiagonal = flattenBoard().charAt(0) + flattenBoard().charAt(4) + flattenBoard().charAt(8);
+            const upwardDiagonal = flattenBoard().charAt(2) + flattenBoard().charAt(4) + flattenBoard().charAt(6);
+            const columnOne = flattenBoard().charAt(0) + flattenBoard().charAt(3) + flattenBoard().charAt(6);
+            const columnTwo = flattenBoard().charAt(1) + flattenBoard().charAt(4) + flattenBoard().charAt(7);
+            const columnThree = flattenBoard().charAt(2) + flattenBoard().charAt(5) + flattenBoard().charAt(8);
+           
+            if (winState.includes(flattenBoard().slice(0,3))
+                || winState.includes(flattenBoard().slice(3,6))
+                || winState.includes(flattenBoard().slice(6))
+                || winState.includes(downwardDiagonal)
+                || winState.includes(upwardDiagonal)
+                || winState.includes(columnOne)
+                || winState.includes(columnTwo)
+                || winState.includes(columnThree)) {
+                    console.log(`${getActivePlayer().name} wins`);
+                    console.log(flattenBoard());
+                    console.log(downwardDiagonal);
+                    console.log(upwardDiagonal);
+                    console.log(columnOne);
+                    console.log(columnTwo);
+                    console.log(columnThree);
+                    const winner = document.querySelector('.winner');
+                    winner.textContent = `${getActivePlayer().name} wins`;
+                    return;
+            } if (round === 9) {
+                console.log('Tie game');
+                return;
+            } 
+            else {
+                switchPlayerTurn();
+                printNewRound();
+            }
+        }    
     };
     printNewRound();
-    return{playRound, getActivePlayer, board, flattenBoard};
+    return{playRound, getActivePlayer, getBoard: board.getBoard};
 }
 
-const game = GameController();
+function ScreenController() {
+    const game = GameController();
+    const playerDiv = document.querySelector('.current-player')
+    const boardDiv = document.querySelector('.board');
+
+    const updateScreen = () => {
+        boardDiv.textContent = "";        
+        const board = game.getBoard();
+        const activePlayer = game.getActivePlayer();
+        playerDiv.textContent = `${activePlayer.name}'s turn`;
+        board.forEach((row, i) => {            
+            row.forEach((cell, index) => {
+                const cellButton = document.createElement('button');                
+                cellButton.dataset.row = i;                
+                cellButton.classList.add("cell");
+                cellButton.dataset.column = index;
+                cellButton.textContent = cell.getValue();
+                boardDiv.appendChild(cellButton);
+            })
+        })
+    }
+    function clickHandlerBoard(e) {
+        const selectedColumn = e.target.dataset.column;
+        const selectedRow = e.target.dataset.row;
+        if (!selectedColumn) return;
+        game.playRound(selectedRow, selectedColumn);
+        updateScreen();
+    }
+    boardDiv.addEventListener('click', clickHandlerBoard);
+    updateScreen()
+}
+
+ScreenController();
