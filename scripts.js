@@ -33,8 +33,8 @@ function Cell() {
     }
 
 function GameController(
-    playerOneName = prompt("Player One:"),
-    playerTwoName = prompt("Player Two:")
+    playerOneName = "Player One:",
+    playerTwoName = "Player Two:"
 ) {
     const board = gameBoard();
     const players = [
@@ -57,16 +57,8 @@ function GameController(
 
     let round = 0;
     let isGameOver = false;
-
     const gameOver = () => isGameOver;
     const switchGameOver = () => isGameOver = true;
-
-
-
-    const printNewRound = () => {
-        board.printBoard();
-        console.log(`${getActivePlayer().name}'s turn.`);
-    };
 
     const flattenBoard = () => {
         let flatBoard = []
@@ -111,8 +103,10 @@ function GameController(
     return{playRound, getActivePlayer, getBoard: board.getBoard, gameOver};
 }
 
-function ScreenController() {
-    const game = GameController();
+function ScreenController(P1, P2) {
+    const game = GameController(P1.value, P2.value);
+    P1.value = "";
+    P2.value = "";
     const playerDiv = document.querySelector('.current-player')
     const boardDiv = document.querySelector('.board');
     const winner = document.querySelector('.winner');  
@@ -147,5 +141,19 @@ function ScreenController() {
 }
 
 const startBtn = document.querySelector('.start')
+const submitBtn = document.querySelector('.submit')
+const dialog = document.querySelector('dialog');
 
-startBtn.addEventListener('click', ScreenController)
+submitBtn.addEventListener('click', () => {
+    const P1 = document.getElementById('P1');
+    const P2 = document.getElementById('P2');
+    if (P1.value === "") {
+        P1.value = "Player One"
+    } if (P2.value === "") {
+        P2.value = "Player Two"
+    }
+    ScreenController(P1, P2);
+    dialog.close();    
+})
+
+startBtn.addEventListener('click', () => dialog.showModal())
