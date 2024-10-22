@@ -140,8 +140,8 @@ function ScreenController(P1, P2) {
     updateScreen()
 }
 
-const startBtn = document.querySelector('.start')
-const submitBtn = document.querySelector('.submit')
+const startBtn = document.querySelector('.start');
+const submitBtn = document.querySelector('.submit');
 const dialog = document.querySelector('dialog');
 
 submitBtn.addEventListener('click', () => {
