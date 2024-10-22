@@ -16,6 +16,11 @@
             text-align: center;
         }
 
+        .form {
+            display: flex;
+            justify-content: space-around;
+        }
+
         .board {
             display: grid;
             grid-template-columns: repeat(3, 150px);
@@ -42,7 +47,20 @@
 <body>
     <div class="header">
         <h1>Tic Tac Toe</h1>
-    </div>
+    </div>    
+    <form>
+        <fieldset class="form">
+            <legend>Enter Player Names:</legend>
+            <div>
+                <label for="P1">Player One Name:</label>
+                <input type="text" id="P1" name="P1-name" />
+            </div>
+            <div>
+                <label for="P2">Player Two Name:</label>
+                <input type="text" id="P2" name="P2-name" />
+            </div>
+        </fieldset>
+    </form>
     <div class="current-player"></div>
     <div class="board"></div>
     <div class="winner"></div>

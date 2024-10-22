@@ -22,7 +22,7 @@ function Cell() {
     let value = " ";
     const placeMarker = (marker) => {
         if (value != ' ') {
-            console.log("Invalid move");
+            alert("Invalid move");
             return;
         } else {
         value = marker;
@@ -99,7 +99,6 @@ function GameController(
                     switchGameOver()
                     return;
             } if (round === 9) {
-                console.log('Tie game');
                 switchGameOver();
                 winner.textContent = "Tie game";
                 return;
@@ -141,7 +140,6 @@ function ScreenController() {
         if (!selectedColumn) return;
         if (game.gameOver()) return;   
         game.playRound(selectedRow, selectedColumn);
-            console.log(game.gameOver());
             updateScreen();
     }
     boardDiv.addEventListener('click', clickHandlerBoard);
