@@ -19,9 +19,9 @@ const gameBoard = (function () {
 })
 
 function Cell() {
-    let value = "-";
+    let value = " ";
     const placeMarker = (marker) => {
-        if (value != '-') {
+        if (value != ' ') {
             console.log("Invalid move");
             return;
         } else {
@@ -33,8 +33,8 @@ function Cell() {
     }
 
 function GameController(
-    playerOneName = "Player One",
-    playerTwoName = "Player Two"
+    playerOneName = prompt("Player One:"),
+    playerTwoName = prompt("Player Two:")
 ) {
     const board = gameBoard();
     const players = [
@@ -56,6 +56,12 @@ function GameController(
     const getActivePlayer = () => activePlayer;
 
     let round = 0;
+    let isGameOver = false;
+
+    const gameOver = () => isGameOver;
+    const switchGameOver = () => isGameOver = true;
+
+
 
     const printNewRound = () => {
         board.printBoard();
@@ -69,7 +75,7 @@ function GameController(
     }
 
     const playRound = (row, column) => {
-        if (board.getBoard()[row][column].getValue() != "-") {
+        if (board.getBoard()[row][column].getValue() != " ") {
             return
         } else {
             board.getBoard()[row][column].placeMarker(activePlayer.token);
@@ -80,7 +86,7 @@ function GameController(
             const columnOne = flattenBoard().charAt(0) + flattenBoard().charAt(3) + flattenBoard().charAt(6);
             const columnTwo = flattenBoard().charAt(1) + flattenBoard().charAt(4) + flattenBoard().charAt(7);
             const columnThree = flattenBoard().charAt(2) + flattenBoard().charAt(5) + flattenBoard().charAt(8);
-           
+            const winner = document.querySelector('.winner');
             if (winState.includes(flattenBoard().slice(0,3))
                 || winState.includes(flattenBoard().slice(3,6))
                 || winState.includes(flattenBoard().slice(6))
@@ -88,35 +94,30 @@ function GameController(
                 || winState.includes(upwardDiagonal)
                 || winState.includes(columnOne)
                 || winState.includes(columnTwo)
-                || winState.includes(columnThree)) {
-                    console.log(`${getActivePlayer().name} wins`);
-                    console.log(flattenBoard());
-                    console.log(downwardDiagonal);
-                    console.log(upwardDiagonal);
-                    console.log(columnOne);
-                    console.log(columnTwo);
-                    console.log(columnThree);
-                    const winner = document.querySelector('.winner');
-                    winner.textContent = `${getActivePlayer().name} wins`;
+                || winState.includes(columnThree)) {                    
+                    winner.textContent = `${getActivePlayer().name} wins.`;
+                    switchGameOver()
                     return;
             } if (round === 9) {
                 console.log('Tie game');
+                switchGameOver();
+                winner.textContent = "Tie game";
                 return;
             } 
             else {
                 switchPlayerTurn();
-                printNewRound();
             }
         }    
-    };
-    printNewRound();
-    return{playRound, getActivePlayer, getBoard: board.getBoard};
+    }
+    return{playRound, getActivePlayer, getBoard: board.getBoard, gameOver};
 }
 
 function ScreenController() {
     const game = GameController();
     const playerDiv = document.querySelector('.current-player')
     const boardDiv = document.querySelector('.board');
+    const winner = document.querySelector('.winner');  
+    winner.textContent = "";
 
     const updateScreen = () => {
         boardDiv.textContent = "";        
@@ -138,11 +139,15 @@ function ScreenController() {
         const selectedColumn = e.target.dataset.column;
         const selectedRow = e.target.dataset.row;
         if (!selectedColumn) return;
+        if (game.gameOver()) return;   
         game.playRound(selectedRow, selectedColumn);
-        updateScreen();
+            console.log(game.gameOver());
+            updateScreen();
     }
     boardDiv.addEventListener('click', clickHandlerBoard);
     updateScreen()
 }
 
-ScreenController();
+const startBtn = document.querySelector('.start')
+
+startBtn.addEventListener('click', ScreenController)
